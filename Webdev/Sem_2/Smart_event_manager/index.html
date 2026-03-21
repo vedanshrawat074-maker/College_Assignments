@@ -1,1 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Event Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(to right, #7fd6da, #2ea7c4);
+        }
 
+        h1 {
+            text-align: center;
+            color: white;
+            font-weight: 700;
+        }
+
+
+        #main {
+            display: grid;
+            grid-template-columns: 0.6fr 1.4fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+
+        #form-container {
+            background: #ffffff;
+            margin-left: 50px;
+            width: 26vw;
+            height: 600px;
+            border-radius: 14px;
+            padding: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+
+        #form-container h2 {
+            color: #0277a8;
+            margin: 10px 0 20px 10px;
+            font-size: 1.8em;
+        }
+
+        #form1 {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 1.1em;
+        }
+
+
+        #form-container input,
+        #form-container select,
+        #form-container textarea {
+            width: 23vw;
+            height: 42px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            font-size: 1rem;
+        }
+
+        label {
+            font-weight: 600;
+        }
+
+
+        #form-container button,
+        #clear-btn,
+        #add-sample {
+            border: none;
+            border-radius: 8px;
+            height: 50px;
+            font-size: 1.05em;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        #form-container button {
+            width: 23vw;
+            background: linear-gradient(to right, #17b7c8, #2bc2da);
+        }
+
+        #form-container button:hover,
+        #clear-btn:hover,
+        #add-sample:hover {
+            background: #4a6dd9;
+            transform: translateY(-1px);
+        }
+
+
+        #Schedule-container {
+            background: #ffffff;
+            width: 63vw;
+            border-radius: 14px;
+            padding: 15px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+        }
+
+        #Schedule-container h2 {
+            color: #0277a8;
+            margin-left: 10px;
+        }
+
+
+        #event-btn {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+
+        #clear-btn {
+            width: 48%;
+            background: linear-gradient(to right, #1bb5c6, #29c4d9);
+        }
+
+        #add-sample {
+            width: 48%;
+            background: linear-gradient(to right, #29c4d9, #1bb5c6);
+        }
+
+
+        #event-handling-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 20px;
+            padding: 10px;
+            min-height: 150px;
+        }
+
+        #event-handling-container:empty::before {
+            content: "No events yet. Add your first event!";
+            color: #888;
+            padding: 40px;
+        }
+
+
+        #event-handling-container > div {
+            background: #f9fafb;
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 5px solid #5b7fed;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #event-handling-container > div:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        #event-handling-container h4 {
+            margin: 0;
+            color: #333;
+        }
+
+        #event-handling-container span {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        #event-handling-container p {
+            color: #555;
+            margin-top: 8px;
+        }
+
+
+        .xbtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: #ff6b6b;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .xbtn:hover {
+            background: #e55353;
+        }
+
+
+        #dom {
+            background: white;
+            border-radius: 12px;
+            margin: 20px 30px 0 50px;
+            padding: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+
+
+        #keybox {
+            background: #f1f3f5;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e2e2;
+            font-weight: 600;
+        }
+
+
+        @media (max-width: 768px) {
+            #main {
+                grid-template-columns: 1fr;
+            }
+
+            #event-btn {
+                flex-direction: column;
+            }
+
+            #form-container,
+            #Schedule-container {
+                width: 90vw;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #form-container input,
+            #form-container button {
+                width: 100%;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+    <h1> Smart Event Dashboard</h1>
+    <div class="main" id="main">
+        <div id="form-container">
+            <h2> Add New Event</h2>
+            <form>
+                <label for="event-title">Event Title :</label>
+                <input type="text" id="event-title" name="">
+                <label for="event-date">Event Date :</label>
+                <input type="date" id="event-date" name="">
+                <label for="event-category">Category</label>
+                <select name="" id="event-category">
+                    <option value="conference"> Conference</option>
+                    <option value="webinar">Webinar</option>
+                    <option value="social">Social</option>
+                    <option value="workshop">Workshop</option>
+                    <option value="meetup">Meetup</option>
+
+                </select>
+                <label for="event-description">Description</label>
+                <textarea name="" id="event-description"></textarea>
+                <button type="submit">Add Event</button>
+
+            </form>
+        </div>
+        <div id="Schedule-container">
+            <h2>My Events</h2>
+
+            <div id="btns-container">
+                <button id="clear-btn">Clear All Events</button>
+                <button id="add-sample">Add Sample Events</button>
+            </div>
+            <div id='event-handling-container'>
+                No Events Yet
+            </div>
+        </div>
+    </div>
+    <script>
+        let form = document.querySelector("form");
+        let eventTitle = document.querySelector('#event-title');
+        let eventDate = document.querySelector('#event-date');
+        let eventCategory = document.querySelector('#event-category');
+        let eventDescription = document.querySelector('#event-description');
+        let clearBtn = document.querySelector('#clear-btn');
+        let addSample = document.querySelector('#add-sample');
+        let eventHandlingContainer = document.querySelector('#event-handling-container');
+
+            
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            if (eventTitle.value === "" || eventDate.value === "") {
+                alert("Please fill event title and date");
+                return;
+            }
+
+                
+            if (eventHandlingContainer.innerText === "No Events Yet") {
+                eventHandlingContainer.innerHTML = "";
+            }
+
+            let card = document.createElement("div");
+            card.className = "event-card";
+
+            let title = document.createElement("h4");
+            title.innerText = eventTitle.value;
+
+            let date = document.createElement("span");
+            date.innerText = eventDate.value;
+
+            let category = document.createElement("span");
+            category.innerText = eventCategory.value;
+
+            let desc = document.createElement("p");
+            desc.innerText = eventDescription.value;
+
+            let deleteBtn = document.createElement("button");
+            deleteBtn.innerText = "X";
+            deleteBtn.className = "delete-btn";
+
+                    
+            deleteBtn.addEventListener("click", function () {
+                card.remove();
+
+                if (eventHandlingContainer.children.length === 0) {
+                    eventHandlingContainer.innerText = "No Events Yet";
+                }
+            });
+
+            card.appendChild(deleteBtn);
+            card.appendChild(title);
+            card.appendChild(date);
+            card.appendChild(document.createElement("br"));
+            card.appendChild(category);
+            card.appendChild(desc);
+
+            eventHandlingContainer.appendChild(card);
+            form.reset();
+            });
+
+            
+        clearBtn.addEventListener("click", function () {
+            eventHandlingContainer.innerText = "No Events Yet";
+        });
+
+            
+        addSample.addEventListener("click", function () {
+            eventHandlingContainer.innerHTML = "";
+
+            addSampleEvent(
+                "Web Development Conference",
+                "2026-02-15",
+                "Conference",
+                "Annual conference on modern web technologies"
+            );
+
+            addSampleEvent(
+                "JavaScript Workshop",
+                "2026-02-20",
+                "Workshop",
+                "Hands-on JavaScript learning session"
+            );
+        });
+
+            
+        function addSampleEvent(titleText, dateText, categoryText, descText) {
+            let card = document.createElement("div");
+            card.className = "event-card";
+
+            let title = document.createElement("h4");
+            title.innerText = titleText;
+
+            let date = document.createElement("span");
+            date.innerText = dateText;
+
+            let category = document.createElement("span");
+            category.innerText = categoryText;
+
+            let desc = document.createElement("p");
+            desc.innerText = descText;
+
+            let deleteBtn = document.createElement("button");
+            deleteBtn.innerText = "X";
+            deleteBtn.className = "delete-btn";
+
+        deleteBtn.addEventListener("click", function () {
+                card.remove();
+                if (eventHandlingContainer.children.length === 0) {
+                        eventHandlingContainer.innerText = "No Events Yet";
+                }
+        });
+
+        card.appendChild(deleteBtn);
+        card.appendChild(title);
+        card.appendChild(date);
+        card.appendChild(document.createElement("br"));
+        card.appendChild(category);
+        card.appendChild(desc);
+
+        eventHandlingContainer.appendChild(card);
+        }   
+    </script>                
+</body>
+</html>
